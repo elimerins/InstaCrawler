@@ -46,7 +46,18 @@ driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div[3]/arti
 time.sleep(2)
 
 print(driver.current_url)
-count=0
+
+html=driver.page_source
+soup=BeautifulSoup(html,"html.parser")
+
+elapa=soup.find('div',{'class':'KL4Bh'})
+
+
+elapa=elapa.find('img')
+print(elapa.name)#string type
+print(type(elapa.name))
+
+'''
 while True:
     datetime=driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[2]/div[2]/a/time').get_attribute('datetime')
     datetime=datetime.replace(':','-')
@@ -88,3 +99,5 @@ while True:
         driver.find_element_by_xpath('/ html / body / div[4] / div[1] / div / div / a[2]').click()
     count+=1
     time.sleep(2)
+
+'''
