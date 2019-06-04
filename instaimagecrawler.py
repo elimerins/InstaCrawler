@@ -39,14 +39,15 @@ driver.quit()
 
 driver=webdriver.Chrome('C:\\Users\\elime\\PycharmProjects\\instarCrawler\\chromedriver.exe')
 driver.implicitly_wait(3)
-
-driver.get('https://www.instagram.com/chuu__chloe')
+account='inkyung97'
+instagram_addr='https://www.instagram.com/'
+driver.get(instagram_addr+account)
 driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]/a').click()
 
 time.sleep(2)
 
 print(driver.current_url)
-
+'''
 html=driver.page_source
 soup=BeautifulSoup(html,"html.parser")
 
@@ -58,16 +59,23 @@ print(elapa.name)#string type
 print(type(elapa.name))
 
 '''
+count=0
 while True:
     datetime=driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[2]/div[2]/a/time').get_attribute('datetime')
     datetime=datetime.replace(':','-')
     datetime=datetime[:19]
-    if os.path.isfile(datetime+".png"):
+    if os.path.isfile('.\\'+account+'\\'+datetime+".png"):
         print(datetime+" is already Exist")
     else:
         if count==0:
-            url = driver.find_element_by_xpath(
-            '/html/body/div[4]/div[2]/div/article/div[1]/div/div/div[1]/div[1]/img').get_attribute('src')
+            html = driver.page_source
+            soup = BeautifulSoup(html, "html.parser")
+
+            elapa = soup.find('div', {'class': 'KL4Bh'})
+
+            elapa = elapa.find('img')['src']
+            print(elapa)  # string type
+            url = elapa
         else:
             try:
                 url = driver.find_element_by_xpath(
@@ -79,10 +87,16 @@ while True:
                     'src')
                 except Exception as inst:
                     print("Not Found")
+                    if count == 0:
+                        driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div/a').click()
+                    else:
+                        driver.find_element_by_xpath('/ html / body / div[4] / div[1] / div / div / a[2]').click()
+                    count += 1
+                    time.sleep(2)
                     continue
 
-        bs4를 활용하여 첫번째 태그 img,video 일 경우로 분리하여 계산.
-        savename = datetime+".png"
+        #bs4를 활용하여 첫번째 태그 img,video 일 경우로 분리하여 계산.
+        savename = account+'_'+datetime+".png"
         try:
             print(datetime)
             urllib.request.urlretrieve(url, savename)
@@ -100,4 +114,3 @@ while True:
     count+=1
     time.sleep(2)
 
-'''
