@@ -62,7 +62,7 @@ print(type(elapa.name))
 count=0
 while True:
     datetime=driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[2]/div[2]/a/time').get_attribute('datetime')
-    datetime=datetime.replace(':','-')
+    datetime=datetime.replace(':','_')
     datetime=datetime[:19]
     if os.path.isfile('.\\'+account+'\\'+datetime+".png"):
         print(datetime+" is already Exist")
@@ -96,10 +96,13 @@ while True:
                     continue
 
         #bs4를 활용하여 첫번째 태그 img,video 일 경우로 분리하여 계산.
-        savename = account+'_'+datetime+".png"
+
+        savename = datetime+".png"
+        fullfilename = os.path.join('C:\\Users\\elime\\PycharmProjects\\instarCrawler\\' + account+'\\', savename)
+        print(fullfilename)
         try:
             print(datetime)
-            urllib.request.urlretrieve(url, savename)
+            urllib.request.urlretrieve(url, fullfilename)
             print(savename+" is saved.")
 
         except Exception as inst:
