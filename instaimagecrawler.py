@@ -39,18 +39,12 @@ driver.quit()
 '''
 
 #realsource
-driver=webdriver.Chrome('yourpath')
+driver=webdriver.Chrome('./chromedriver')
 driver.implicitly_wait(3)
-account='account name'
+account='bodyon_bikini'
 instagram_addr='https://www.instagram.com/'
 driver.get(instagram_addr+account)
 time.sleep(3)
-try:
-    driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]/a').click()
-    driver.find_element_by_xpath('/html/body/div[4]/button[1]').click()
-except Exception as inst:
-    print("Not Found")
-    driver.quit()
 
 #dir이 없다면, DIR을 만들어줌
 if not (os.path.isdir(account)):
@@ -68,36 +62,27 @@ def nextPic(count):
 
 urls=[]
 checkend=0
-height = driver.execute_script("return document.body.scrollHeight")
 
-for k in range(20):
-    for i in range(1,14):
-        for j in range(1,4):
-            try:
-                url=driver.find_element_by_xpath('//*[@id="react-root"]/section/main'
-                                                 '/div/div[3]/article/div[1]/div/div['+str(i)+']/div['+str(j)+']/a').get_attribute('href')
-                if url not in urls:
-                    print(url)
-                    urls.append(url)
-                driver.find_element_by_tag_name('body').send_keys(Keys.END)
-                #driver.execute_script("window.scrollTo(0, window.scrollY + 200)")
-            except Exception as inst:
-                print(k,i,j)
-
-                driver.find_element_by_tag_name('body').send_keys(Keys.END)
-                driver.implicitly_wait(2)
+for i in range(200):
+    html = driver.page_source
+    soup = BeautifulSoup(html, "html.parser")
+    for alpha in soup.findAll('div',{'class':'v1Nh3 kIKUG _bz0w'}):
+        url=alpha.find('a')['href']
+        if url not in urls:
+            print(url)
+            urls.append(url)
+    driver.find_element_by_tag_name('body').send_keys(Keys.END)
+    driver.find_element_by_tag_name('body').send_keys(Keys.END)
+    driver.find_element_by_tag_name('body').send_keys(Keys.END)
 
 for url in urls:
-    print(url)
-    driver.get(url)
+    print(instagram_addr+account+url)
+    driver.get(instagram_addr+account+url)
     driver.implicitly_wait(3)
-    try:
-        datetime = driver.find_element_by_xpath(
-            '//*[@id="react-root"]/section/main/div/div/article/div[2]/div[2]/a/time').get_attribute(
-            'datetime')
-    except Exception as inst:
-        datetime = driver.find_element_by_xpath(
-            '/html/body/div[4]/div[2]/div/article/div[2]/div[2]/a/time').get_attribute('datetime')
+    html=driver.page_source
+    soup=BeautifulSoup(html,"html.parser")
+    datetime=soup.find('time')['datetime']
+    print(datetime)
     datetime = datetime.replace('T', 'T ')
     datetime=datetime.replace(':','_')
     datetime=datetime[:20]
