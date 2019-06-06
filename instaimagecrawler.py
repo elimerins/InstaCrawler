@@ -41,7 +41,7 @@ driver.quit()
 #realsource
 driver=webdriver.Chrome('./chromedriver')
 driver.implicitly_wait(3)
-account='bodyon_bikini'
+account='seon_uoo'
 instagram_addr='https://www.instagram.com/'
 driver.get(instagram_addr+account)
 time.sleep(3)
@@ -63,62 +63,89 @@ def nextPic(count):
 urls=[]
 checkend=0
 
-for i in range(200):
+#게시물 갯수 확인하는 코드, 다만 bs를 쓰기때문에 조금 느려짐.
+html = driver.page_source
+soup = BeautifulSoup(html, "html.parser")
+contentNum=soup.find('span',{'class':'g47SY'}).text
+
+count=0
+for i in range(2000):
+    if len(urls)+1==int(contentNum):
+        break
     html = driver.page_source
     soup = BeautifulSoup(html, "html.parser")
     for alpha in soup.findAll('div',{'class':'v1Nh3 kIKUG _bz0w'}):
         url=alpha.find('a')['href']
         if url not in urls:
-            print(url)
             urls.append(url)
+            count+=1
+            print(url+' '+str(count)+' '+contentNum)
+            if len(urls)+1 == int(contentNum):
+                break
     driver.find_element_by_tag_name('body').send_keys(Keys.END)
     driver.find_element_by_tag_name('body').send_keys(Keys.END)
     driver.find_element_by_tag_name('body').send_keys(Keys.END)
 
-for url in urls:
+print('Crawling Start\n')
+for idx,url in enumerate(urls):
+    print('\n'+str(idx+1)+'/'+str(len(urls)))
     print(instagram_addr+account+url)
     driver.get(instagram_addr+account+url)
     driver.implicitly_wait(3)
     html=driver.page_source
     soup=BeautifulSoup(html,"html.parser")
+
     datetime=soup.find('time')['datetime']
     print(datetime)
     datetime = datetime.replace('T', 'T ')
     datetime=datetime.replace(':','_')
     datetime=datetime[:20]
-    savename = datetime + ".png"
-    fullfilename = os.path.join('C:\\Users\\elime\\PycharmProjects\\instarCrawler\\' + account + '\\', savename)
 
-    if os.path.isfile(fullfilename):
+    savename_img = datetime + ".png"
+    savename_video=datetime + ".mp4"
+    fullfilename_img = os.path.join('C:\\Users\\elime\\PycharmProjects\\instarCrawler\\' + account + '\\', savename_img)
+    fullfilename_video = os.path.join('C:\\Users\\elime\\PycharmProjects\\instarCrawler\\' + account + '\\', savename_video)
+
+    if os.path.isfile(fullfilename_img) or os.path.isfile(fullfilename_video):
         print(datetime+" is already Exist")
     else:
         try:
-            html = driver.page_source
-            soup = BeautifulSoup(html, "html.parser")
+
+            elapa = soup.find('div', {'class': '_5wCQW'})
+            mediaurl = elapa.find('video')['src']
+            print(mediaurl)
+            print("Video Found")
+            # count=nextPic(count)
+
+            print(fullfilename_video)
+            try:
+                print(datetime)
+                urllib.request.urlretrieve(mediaurl, "./" + account + "/" + savename_video)
+                print(savename_video + " is saved.")
+
+            except Exception as inst:
+                print(type(inst))
+                print("Nope")
+                driver.quit()
+
+
+        except Exception as inst:
 
             elapa = soup.find('div', {'class': 'KL4Bh'})
-            imgurl=elapa.find('img')['src']
-            print(imgurl)
+            mediaurl = elapa.find('img')['src']
+            print(mediaurl)
+            print("Image Found")
 
-        except Exception as inst:
-            print("Not Found")
-            #count=nextPic(count)
+            print(fullfilename_img)
+            try:
+                print(datetime)
+                urllib.request.urlretrieve(mediaurl, "./" + account + "/" + savename_img)
+                print(savename_img + " is saved.")
+
+            except Exception as inst:
+                print(type(inst))
+                print("Nope")
+                driver.quit()
+
             continue
-
-        #count=nextPic(count)
-
-        #bs4를 활용하여 첫번째 태그 img,video 일 경우로 분리하여 계산.
-
-        print(fullfilename)
-        try:
-            print(datetime)
-            urllib.request.urlretrieve(imgurl, "./"+account+"/"+savename)
-            print(savename+" is saved.")
-
-        except Exception as inst:
-            print(type(inst))
-            print("Nope")
-            driver.quit()
-
 driver.quit()
-    #count=nextPic(count)
