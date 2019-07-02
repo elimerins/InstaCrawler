@@ -5,43 +5,11 @@ import time
 import os
 from selenium.webdriver.common.keys import Keys
 
-'''
-#url은 직접 지정하면 당연히 편하지만, 이걸 변수화할 수 있는가?
-
-#각 이미지별 xpath
-# /html/body/div[3]/div[2]/div/article/div[1]/div/div/div[1]/img
-# value가 src의 URL
-url='https://scontent-icn1-1.cdninstagram.com/vp/3679a2aab2d4139c96fca74a6bf6ab21/5D7A439D/t51.2885-15/e35/p1080x1080/59437726_147637629620230_8042594664446725464_n.jpg?_nc_ht=scontent-icn1-1.cdninstagram.com'
-
-savename="test.png"
-
-urllib.request.urlretrieve(url,savename)
-
-print(savename+" saved")
-'''
-'''
-
-셀레니움 단일 사진 긁어오는 소스
-driver=webdriver.Chrome('C:\\Users\\elime\\PycharmProjects\\instarCrawler\\chromedriver.exe')
-
-driver.implicitly_wait(3)
-
-driver.get('https://www.instagram.com/p/Bxj2yyFnlVx/')
-
-url=driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/article/div[1]/div/div/div[1]/img').get_attribute('src')
-
-savename="test.png"
-
-urllib.request.urlretrieve(url,savename)
-
-print(savename+" saved")
-driver.quit()
-'''
 
 #realsource
 driver=webdriver.Chrome('./chromedriver')
 driver.implicitly_wait(3)
-account='____uhaa'
+account='cooicu'
 instagram_addr='https://www.instagram.com/'
 driver.get(instagram_addr+account)
 time.sleep(3)
@@ -108,6 +76,9 @@ for idx,url in enumerate(urls):
 
     if os.path.isfile(fullfilename_img) or os.path.isfile(fullfilename_video):
         print(datetime+" is already Exist")
+        print('Program will be terminated')
+        break
+
     else:
         try:
 
